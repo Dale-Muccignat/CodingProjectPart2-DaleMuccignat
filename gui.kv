@@ -1,0 +1,36 @@
+BoxLayout:
+    orientation: 'vertical'
+    Label:
+        id: current_trip_label
+        text: "Current trip location: "
+        font_size: 20
+        color: (1, 1, 0.5, 1)
+    BoxLayout:
+        orientation: 'horizontal'
+        Spinner:
+            id: country_spinner
+            text: app.current_state
+            # Values takes a list
+            values: app.state_codes
+            on_text: app.change_state(self.text)
+        TextInput:
+            id: current_country_input
+    BoxLayout:
+        orientation: 'horizontal'
+        Label:
+            id: home_country_label
+            text: "Test"
+        TextInput:
+            id: home_country_input
+    Label:
+        id: date_label
+        text: "test"
+    BoxLayout:
+        orientation: 'horizontal'
+        Label:
+            id: status_label
+        Button:
+            id: update_button
+            on_press: app.update_button_press()
+
+
