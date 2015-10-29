@@ -15,6 +15,8 @@ BoxLayout:
             on_text: app.change_state(self.text)
         TextInput:
             id: current_country_input
+        Label:
+            id: test_label
     BoxLayout:
         orientation: 'horizontal'
         Label:
@@ -31,6 +33,6 @@ BoxLayout:
             id: status_label
         Button:
             id: update_button
-            on_press: app.update_button_press()
+            # on_press: app.update_button_press()
 
 
