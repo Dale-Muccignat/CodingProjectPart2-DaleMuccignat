@@ -11,8 +11,8 @@ BoxLayout:
             id: country_spinner
             text: app.current_state
             # Values takes a list
-            values: app.state_codes
-            on_text: app.change_state(self.text)
+            values: app.country_names
+            # on_text: app.change_state(self.text)
         TextInput:
             id: current_country_input
         Label:

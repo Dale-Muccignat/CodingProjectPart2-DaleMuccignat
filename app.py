@@ -2,15 +2,19 @@ __author__ = 'Dale Muccignat'
 
 from kivy.app import App
 from kivy.lang import Builder
+from kivy.properties import StringProperty
+from kivy.properties import ListProperty
 from kivy.core.window import Window
 from currency import get_all_details
 
 
 class GuiTest(App):
+    current_state = StringProperty()
+    country_names = ListProperty()
+
+
     def __init__(self, **kwargs):
         super(GuiTest, self).__init__(**kwargs)
-        self.current_state = ''
-        self.state_codes = []
         self.trip_details = []
 
     def build(self):
@@ -18,9 +22,12 @@ class GuiTest(App):
         country_list = GuiTest.sort_trips()
         self.title = "Part 2"
         self.root = Builder.load_file('gui.kv')
-        print(country_list)
-        # self.current_state = str(country_list[0])
-        # self.state_codes = country_list
+        # print(country_list)
+        # print(country_list[0])
+        # Set current state to first country in list
+        self.current_state = str(country_list[0])
+        #
+        self.country_names = country_list
         return self.root
 
     # def update_button_press(self):
