@@ -2,7 +2,7 @@ BoxLayout:
     orientation: 'vertical'
     Label:
         id: current_trip_label
-        text: "Current trip location: "
+        text: app.current_country_formatted
         font_size: 20
         color: (1, 1, 0.5, 1)
     BoxLayout:
@@ -25,7 +25,7 @@ BoxLayout:
             id: home_country_input
     Label:
         id: date_label
-        text: app.current_date
+        text: app.current_date_formatted
     BoxLayout:
         orientation: 'horizontal'
         Label:
