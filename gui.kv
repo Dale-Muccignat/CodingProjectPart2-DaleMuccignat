@@ -12,21 +12,20 @@ BoxLayout:
             text: app.current_state
             # Values takes a list
             values: app.country_names
-            # on_text: app.change_state(self.text)
+            # When text is change, run change_state
+            on_text: app.change_state(self.text)
         TextInput:
             id: current_country_input
-        Label:
-            id: test_label
     BoxLayout:
         orientation: 'horizontal'
         Label:
             id: home_country_label
-            text: "Test"
+            text: app.home_state
         TextInput:
             id: home_country_input
     Label:
         id: date_label
-        text: "test"
+        text: app.current_date
     BoxLayout:
         orientation: 'horizontal'
         Label:
