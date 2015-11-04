@@ -16,6 +16,8 @@ BoxLayout:
             on_text: app.change_state(self.text)
         TextInput:
             id: current_country_input
+            multiline: False
+            on_text_validate: app.convert_amount(50, "False")
     BoxLayout:
         orientation: 'horizontal'
         Label:
@@ -23,6 +25,8 @@ BoxLayout:
             text: app.home_state
         TextInput:
             id: home_country_input
+            multiline: False
+            on_text_validate: app.convert_amount(20, "True")
     Label:
         id: date_label
         text: "  Today is: \n" + app.get_current_time()
@@ -32,6 +36,6 @@ BoxLayout:
             id: status_label
         Button:
             id: update_button
-            # on_press: app.update_button_press()
+            on_press: app.change_state(country_spinner.text)
 
 

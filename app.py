@@ -1,5 +1,3 @@
-__author__ = 'Dale Muccignat'
-
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.properties import StringProperty
@@ -7,9 +5,11 @@ from kivy.properties import ListProperty
 import time
 from kivy.core.window import Window
 from currency import get_all_details
+from currency import convert
 from trip import Details
 
-# on_text_validate
+__author__ = 'Dale Muccignat'
+
 
 class GuiTest(App):
     current_state = StringProperty()
@@ -18,7 +18,7 @@ class GuiTest(App):
 
     def __init__(self, **kwargs):
         super(GuiTest, self).__init__(**kwargs)
-        self.trip_details = []
+        self.conversion_rate = 0
 
     def build(self):
         Window.size = (350, 700)
@@ -31,12 +31,34 @@ class GuiTest(App):
         self.country_names = country_list
         return self.root
 
-    # def update_button_press(self):
-    #     print("update_button pressed")
+    def conversion_rate_update(self, from_currency, too_currency):
+        """ Update currency conversion rate """
+        self.conversion_rate = convert(1, from_currency, too_currency)
+        print("Rate converted too: " + str(self.conversion_rate))
 
-    def change_state(self, text):
-        # self.root.ids.test_label.text = text
-        print("country changed")
+    def change_state(self, current_country):
+        """ When country is changed, update currency"""
+        country_dict = get_all_details()
+        # Find currency code for current country
+        too_currency = ""
+        for parts in country_dict:
+            if current_country == parts:
+                values = country_dict[parts]
+                too_currency = values[0]
+        # Update conversion rate
+        GuiTest().conversion_rate_update("AUD", too_currency)
+        print("country changed too: " + current_country)
+
+    def convert_amount(self, amount, key):
+        """ Convert amount"""
+        amount = float(amount)
+        print("Rate: " + str(self.conversion_rate))
+        if key == "True":
+            print(amount * self.conversion_rate)
+            return amount * self.conversion_rate
+            # else:
+            #     print(amount * (1 / self.conversion_rate))
+            #     return amount * (1 / self.conversion_rate)
 
     @staticmethod
     def sort_trips():
@@ -53,6 +75,7 @@ class GuiTest(App):
 
     @staticmethod
     def get_current_country():
+        """ Returns name of current country"""
         details = Details()
         file = open("config.txt", mode="r", encoding="UTF-8")
         file.readline()
@@ -65,6 +88,7 @@ class GuiTest(App):
 
     @staticmethod
     def get_current_time():
+        """ Returns current time"""
         current_date = time.strftime("%Y/%m/%d")
         return current_date
 
