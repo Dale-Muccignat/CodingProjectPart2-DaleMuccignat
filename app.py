@@ -14,10 +14,6 @@ class GuiTest(App):
     current_state = StringProperty()
     home_state = StringProperty()
     country_names = ListProperty()
-    current_date = time.strftime("%Y/%m/%d")
-    current_country = Details().current_country(current_date)
-    current_country_formatted = "  Current country: \n" + current_country
-    current_date_formatted = "  Today is: \n" + current_date
 
     def __init__(self, **kwargs):
         super(GuiTest, self).__init__(**kwargs)
@@ -54,7 +50,22 @@ class GuiTest(App):
         file.close()
         return sorted(trip_countries)
 
-# Adding config data to trip.py
+    @staticmethod
+    def get_current_country():
+        details = Details()
+        file = open("config.txt", mode="r", encoding="UTF-8")
+        file.readline()
+        for line in file:
+            parts = line.strip().split(",")
+            details.add(parts[0], parts[1], parts[2])
+        current_country = details.current_country(GuiTest.get_current_time())
+        file.close()
+        return "Your Location: \n" + current_country
+
+    @staticmethod
+    def get_current_time():
+        current_date = time.strftime("%Y/%m/%d")
+        return current_date
 
 
 GuiTest().run()

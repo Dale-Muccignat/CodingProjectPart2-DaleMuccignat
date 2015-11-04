@@ -2,7 +2,7 @@ BoxLayout:
     orientation: 'vertical'
     Label:
         id: current_trip_label
-        text: app.current_country_formatted
+        text: app.get_current_country()
         font_size: 20
         color: (1, 1, 0.5, 1)
     BoxLayout:
@@ -25,7 +25,7 @@ BoxLayout:
             id: home_country_input
     Label:
         id: date_label
-        text: app.current_date_formatted
+        text: "  Today is: \n" + app.get_current_time()
     BoxLayout:
         orientation: 'horizontal'
         Label:
