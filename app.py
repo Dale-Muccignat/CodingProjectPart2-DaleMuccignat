@@ -9,6 +9,7 @@ from kivy.core.window import Window
 from currency import get_all_details
 from trip import Details
 
+# on_text_validate
 
 class GuiTest(App):
     current_state = StringProperty()
