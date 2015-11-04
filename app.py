@@ -7,15 +7,16 @@ from kivy.properties import ListProperty
 import time
 from kivy.core.window import Window
 from currency import get_all_details
+from trip import Details
 
 
 class GuiTest(App):
     current_state = StringProperty()
     home_state = StringProperty()
     country_names = ListProperty()
-    current_country = StringProperty()
-    current_country_formatted = "  Currenty country: \n" + str(current_country)
     current_date = time.strftime("%Y/%m/%d")
+    current_country = Details().current_country(current_date)
+    current_country_formatted = "  Current country: \n" + current_country
     current_date_formatted = "  Today is: \n" + current_date
 
     def __init__(self, **kwargs):
@@ -50,11 +51,10 @@ class GuiTest(App):
         for line in file:
             parts = line.strip().split(",")
             trip_countries.append(parts[0])
-            # If current date inside trip, update current country
-            if parts[1] <= GuiTest.current_date <= parts[2]:
-                GuiTest.current_country = parts[0]
         file.close()
         return sorted(trip_countries)
+
+# Adding config data to trip.py
 
 
 GuiTest().run()
