@@ -20,7 +20,7 @@ class GuiTest(App):
         super(GuiTest, self).__init__(**kwargs)
         self.conversion_rate = 0
         self.current_date = self.get_current_date()
-        self.country_names = self.sort_trips().keys()
+        self.country_names = sorted(self.sort_trips().keys())
         # Details lists of form [code, symbol]
         self.home_details = []
         self.travel_details = []
@@ -41,11 +41,18 @@ class GuiTest(App):
         # Find currency code/symbol for home/travel country
         for parts in country_details_dict:
             if travel_country == parts:
+                # If currency symbol is the same, and list not blank, return "Same"
                 if self.travel_details != [] and country_details_dict[parts][2] == self.travel_details[2]:
                     return "Same"
                 self.travel_details = country_details_dict[parts]
+            else:
+                self.toggle_inputs_readonly(True)
+                self.root.ids.status_label.text = "Invalid Name!"
             if home_country == parts:
                 self.home_details = country_details_dict[parts]
+            else:
+                self.toggle_inputs_readonly(True)
+                self.root.ids.status_label.text = "Invalid Name!"
 
     def get_current_country(self):
         """ Returns name of current country"""
@@ -57,30 +64,32 @@ class GuiTest(App):
         print("Current country: " + current_country)
         return current_country
 
-    def update_rate(self):
+    def update_rate(self, key):
         """ When country is changed, update currency"""
         self.travel_country = self.root.ids.country_spinner.text
+        get_country_details = self.get_country_details()
         # If spinner is blank, set spinner to current country
         if self.travel_country == "":
             self.root.ids.country_spinner.text = self.get_current_country()
             self.travel_country = self.root.ids.country_spinner.text
         # Retrieve country/trip details
-        if self.get_country_details() == "Same":
+        # If currency is the same and function activated by spinner, don't update
+        if get_country_details == "Same" and key:
+            pass
+        # If lists are still empty, don't update
+        elif self.home_details == [] or self.travel_details == []:
             pass
         else:
-            self.get_country_details()
             self.conversion_rate = convert(1, self.home_details[1], self.travel_details[1])
             # Update conversion rate
             print("Rate changed to: " + str(self.conversion_rate))
             # Error checking, enable input if success
             if self.conversion_rate == -1:
                 self.root.ids.status_label.text = "Update Failed"
-                self.root.ids.home_country_input.readonly = True
-                self.root.ids.travel_country_input.readonly = True
+                self.toggle_inputs_readonly(True)
             else:
-                self.root.ids.home_country_input.readonly = False
-                self.root.ids.travel_country_input.readonly = False
                 self.clear_inputs()
+                self.toggle_inputs_readonly(False)
                 self.root.ids.status_label.text = "Updated at: " + time.strftime("%I:%M:%S%p")
             print("country changed to: " + self.travel_country)
 
@@ -106,21 +115,30 @@ class GuiTest(App):
             self.clear_inputs()
             self.root.ids.status_label.text = "Invalid Number!"
 
+    def sort_trips(self):
+        """ creates list of countries to display on spinner """
+        trip_countries = {}
+        #TODO Fix the silly error
+        # try:
+        #     file = open("config.txt", mode="r", encoding="UTF-8")
+        #     self.home_country = file.readline().strip()
+        #     # Generates list of country names
+        #     for line in file:
+        #         parts = line.strip().split(",")
+        #         trip_countries[parts[0]] = (parts[0], parts[1], parts[2])
+        #     file.close()
+        # except FileNotFoundError:
+        #     self.toggle_inputs_readonly(True)
+        #     self.root.ids.status_label.text = "Config not found!"
+        return trip_countries
+
     def clear_inputs(self):
         self.root.ids.home_country_input.text = ""
         self.root.ids.travel_country_input.text = ""
 
-    def sort_trips(self):
-        """ creates list of countries to display on spinner """
-        trip_countries = {}
-        file = open("config.txt", mode="r", encoding="UTF-8")
-        self.home_country = file.readline().strip()
-        # Generates list of country names
-        for line in file:
-            parts = line.strip().split(",")
-            trip_countries[parts[0]] = (parts[0], parts[1], parts[2])
-        file.close()
-        return trip_countries
+    def toggle_inputs_readonly(self, key):
+        self.root.ids.home_country_input.readonly = key
+        self.root.ids.travel_country_input.readonly = key
 
     @staticmethod
     def get_current_date():

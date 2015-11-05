@@ -1,40 +1,34 @@
-#<Label>:
-#    canvas.before:
-#        Color:
-#            rgba: 0, 0, 0, 0
-#        Rectangle:
-
-
 BoxLayout:
     orientation: 'vertical'
     Label:
         id: current_trip_label
-        text: "Your Location: \n" + app.get_current_country()
+        text: 'Your Location: \n' + app.get_current_country()
         font_size: 20
         color: (1, 1, 0.5, 1)
-        halign: "center"
+        halign: 'center'
     BoxLayout:
         orientation: 'horizontal'
         Spinner:
             id: country_spinner
-            text: ""
+            text: ''
             # Values takes a list
             values: app.country_names
             # When text is changed, run change_state
-            on_text: app.update_rate()
+            on_text: app.update_rate(True)
         TextInput:
             id: travel_country_input
             multiline: False
-            text: ""
+            text: ''
             readonly: True
-            on_text: status_label.text = ""
+            on_text: status_label.text = ''
+            # When enter is pressed, run convert_amount
             on_text_validate: app.convert_amount(self.text, False)
     BoxLayout:
         orientation: 'horizontal'
         Label:
             id: home_country_label
             text: app.home_country
-            halign: "center"
+            halign: 'center'
         TextInput:
             id: home_country_input
             multiline: False
@@ -44,16 +38,16 @@ BoxLayout:
             on_text_validate: app.convert_amount(self.text, True)
     Label:
         id: date_label
-        text: "Today is: \n" + app.current_date
-        halign: "center"
+        text: 'Today is: \n' + app.current_date
+        halign: 'center'
     BoxLayout:
         orientation: 'horizontal'
         Label:
             id: status_label
-            halign: "center"
+            halign: 'center'
         Button:
             id: update_button
-            text: "Update Currency"
-            on_press: app.update_rate()
+            text: 'Update Currency'
+            on_press: app.update_rate(False)
 
 
