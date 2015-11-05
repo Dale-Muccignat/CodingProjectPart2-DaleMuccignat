@@ -15,14 +15,15 @@ class GuiTest(App):
     current_state = StringProperty()
     home_state = StringProperty()
     country_names = ListProperty()
+    conversion_rate = 0
 
     def __init__(self, **kwargs):
         super(GuiTest, self).__init__(**kwargs)
-        self.conversion_rate = 0
 
     def build(self):
         Window.size = (350, 700)
         country_list = GuiTest.sort_trips()
+        print(country_list)
         self.title = "Part 2"
         self.root = Builder.load_file('gui.kv')
         # Set current state to first country in list
@@ -34,7 +35,7 @@ class GuiTest(App):
     def conversion_rate_update(self, from_currency, too_currency):
         """ Update currency conversion rate """
         self.conversion_rate = convert(1, from_currency, too_currency)
-        print("Rate converted too: " + str(self.conversion_rate))
+        print("Rate changed too: " + str(self.conversion_rate))
 
     def change_state(self, current_country):
         """ When country is changed, update currency"""
@@ -83,6 +84,7 @@ class GuiTest(App):
             parts = line.strip().split(",")
             details.add(parts[0], parts[1], parts[2])
         current_country = details.current_country(GuiTest.get_current_time())
+        print("Current country: " + current_country)
         file.close()
         return "Your Location: \n" + current_country
 
@@ -90,6 +92,7 @@ class GuiTest(App):
     def get_current_time():
         """ Returns current time"""
         current_date = time.strftime("%Y/%m/%d")
+        print(current_date)
         return current_date
 
 
