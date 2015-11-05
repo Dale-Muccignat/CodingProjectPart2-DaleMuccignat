@@ -20,7 +20,7 @@ class GuiTest(App):
         super(GuiTest, self).__init__(**kwargs)
         self.conversion_rate = 0
         self.current_date = self.get_current_date()
-        self.country_names = self.sort_trips()
+        self.country_names = self.sort_trips().keys()
         # Details lists of form [code, symbol]
         self.home_details = []
         self.travel_details = []
@@ -41,6 +41,8 @@ class GuiTest(App):
         # Find currency code/symbol for home/travel country
         for parts in country_details_dict:
             if travel_country == parts:
+                if self.travel_details != [] and country_details_dict[parts][2] == self.travel_details[2]:
+                    return "Same"
                 self.travel_details = country_details_dict[parts]
             if home_country == parts:
                 self.home_details = country_details_dict[parts]
@@ -48,13 +50,10 @@ class GuiTest(App):
     def get_current_country(self):
         """ Returns name of current country"""
         details = Details()
-        file = open("config.txt", mode="r", encoding="UTF-8")
-        file.readline()
-        for line in file:
-            parts = line.strip().split(",")
-            details.add(parts[0], parts[1], parts[2])
+        trip_countries_dict = self.sort_trips()
+        for part in trip_countries_dict:
+            details.add(trip_countries_dict[part][0], trip_countries_dict[part][1], trip_countries_dict[part][2])
         current_country = details.current_country(self.current_date)
-        file.close()
         print("Current country: " + current_country)
         return current_country
 
@@ -66,18 +65,24 @@ class GuiTest(App):
             self.root.ids.country_spinner.text = self.get_current_country()
             self.travel_country = self.root.ids.country_spinner.text
         # Retrieve country/trip details
-        self.get_country_details()
-        # Update conversion rate
-        self.conversion_rate = convert(1, self.home_details[1], self.travel_details[1])
-        print("Rate changed to: " + str(self.conversion_rate))
-        # Error checking, enable input if success
-        if self.conversion_rate == -1:
-            self.root.ids.status_label.text = "Update Failed"
+        if self.get_country_details() == "Same":
+            pass
         else:
-            self.root.ids.home_country_input.readonly = False
-            self.root.ids.travel_country_input.readonly = False
-            self.clear_inputs()
-        print("country changed to: " + self.travel_country)
+            self.get_country_details()
+            self.conversion_rate = convert(1, self.home_details[1], self.travel_details[1])
+            # Update conversion rate
+            print("Rate changed to: " + str(self.conversion_rate))
+            # Error checking, enable input if success
+            if self.conversion_rate == -1:
+                self.root.ids.status_label.text = "Update Failed"
+                self.root.ids.home_country_input.readonly = True
+                self.root.ids.travel_country_input.readonly = True
+            else:
+                self.root.ids.home_country_input.readonly = False
+                self.root.ids.travel_country_input.readonly = False
+                self.clear_inputs()
+                self.root.ids.status_label.text = "Updated at: " + time.strftime("%I:%M:%S%p")
+            print("country changed to: " + self.travel_country)
 
     def convert_amount(self, amount, key):
         """ Convert amount"""
@@ -88,12 +93,14 @@ class GuiTest(App):
             if key:
                 result = format(amount * self.conversion_rate, ".3f")
                 self.root.ids.travel_country_input.text = str(result)
-                self.root.ids.status_label.text = "{} ({}) to {} ({})".format(self.home_details[1], self.home_details[2], self.travel_details[1], self.travel_details[2])
+                format_tuple_travel = (self.home_details[1], self.home_details[2], self.travel_details[1], self.travel_details[2])
+                self.root.ids.status_label.text = "{} ({}) to {} ({})".format(*format_tuple_travel)
                 print(result)
             else:
-                result = format(amount * (1 / self.conversion_rate), ".3f")
+                result = format(amount / self.conversion_rate, ".3f")
                 self.root.ids.home_country_input.text = str(result)
-                self.root.ids.status_label.text = "{} ({}) to {} ({})".format(self.travel_details[1], self.travel_details[2], self.home_details[1], self.home_details[2])
+                format_tuple_home = (self.travel_details[1], self.travel_details[2], self.home_details[1], self.home_details[2])
+                self.root.ids.status_label.text = "{} ({}) to {} ({})".format(*format_tuple_home)
                 print(result)
         except ValueError:
             self.clear_inputs()
@@ -105,15 +112,15 @@ class GuiTest(App):
 
     def sort_trips(self):
         """ creates list of countries to display on spinner """
-        trip_countries = []
+        trip_countries = {}
         file = open("config.txt", mode="r", encoding="UTF-8")
         self.home_country = file.readline().strip()
         # Generates list of country names
         for line in file:
             parts = line.strip().split(",")
-            trip_countries.append(parts[0])
+            trip_countries[parts[0]] = (parts[0], parts[1], parts[2])
         file.close()
-        return sorted(trip_countries)
+        return trip_countries
 
     @staticmethod
     def get_current_date():
