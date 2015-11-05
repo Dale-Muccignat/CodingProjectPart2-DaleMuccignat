@@ -9,15 +9,18 @@ BoxLayout:
         orientation: 'horizontal'
         Spinner:
             id: country_spinner
-            text: app.current_state
+            text: ""
             # Values takes a list
             values: app.country_names
-            # When text is change, run change_state
+            # When text is changed, run change_state
             on_text: app.change_state(self.text)
         TextInput:
-            id: current_country_input
+            id: travel_country_input
             multiline: False
-            on_text_validate: app.convert_amount(50, "False")
+            text: ""
+            readonly: True
+            on_text: status_label.text = ""
+            on_text_validate: app.convert_amount(self.text, False)
     BoxLayout:
         orientation: 'horizontal'
         Label:
@@ -26,7 +29,10 @@ BoxLayout:
         TextInput:
             id: home_country_input
             multiline: False
-            on_text_validate: app.convert_amount(20, "True")
+            text: ""
+            readonly: True
+            on_text: status_label.text = ""
+            on_text_validate: app.convert_amount(self.text, True)
     Label:
         id: date_label
         text: "  Today is: \n" + app.get_current_time()

@@ -48,13 +48,13 @@ def get_details(country_name):
 
 
 def get_all_details():
-    details_dict =  {}
+    details_dict = {}
     file = open('currency_details.txt', encoding='utf-8')
     #  Stores all lines into a dictionary with the country name as the key, and the code and currency
     #  as a tuple as the value
     for line in file:
         words = line.strip().split(',')
-        details_dict[words[0]] = (words[1], words[2])
+        details_dict[words[0]] = (words[0], words[1], words[2])
     # print(details_dict) debugging
     file.close()
     return details_dict

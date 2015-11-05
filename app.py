@@ -15,10 +15,10 @@ class GuiTest(App):
     current_state = StringProperty()
     home_state = StringProperty()
     country_names = ListProperty()
-    conversion_rate = 0
 
     def __init__(self, **kwargs):
         super(GuiTest, self).__init__(**kwargs)
+        self.conversion_rate = 0
 
     def build(self):
         Window.size = (350, 700)
@@ -32,34 +32,61 @@ class GuiTest(App):
         self.country_names = country_list
         return self.root
 
-    def conversion_rate_update(self, from_currency, too_currency):
+    def conversion_rate_update(self, from_currency, to_currency):
         """ Update currency conversion rate """
-        self.conversion_rate = convert(1, from_currency, too_currency)
-        print("Rate changed too: " + str(self.conversion_rate))
+        self.conversion_rate = convert(1, from_currency, to_currency)
+        print("Rate changed to: " + str(self.conversion_rate))
+        # Error checking, enable input if success
+        if self.conversion_rate == -1:
+            self.root.ids.status_label.text = "Update Failed"
+        else:
+            self.root.ids.home_country_input.readonly = False
+            self.root.ids.travel_country_input.readonly = False
+            self.clear_inputs()
 
     def change_state(self, current_country):
         """ When country is changed, update currency"""
         country_dict = get_all_details()
         # Find currency code for current country
-        too_currency = ""
+        to_currency = ""
         for parts in country_dict:
             if current_country == parts:
                 values = country_dict[parts]
-                too_currency = values[0]
+                to_currency = values[1]
         # Update conversion rate
-        GuiTest().conversion_rate_update("AUD", too_currency)
-        print("country changed too: " + current_country)
+        self.conversion_rate_update("AUD", to_currency)
+        print("country changed to: " + current_country)
 
     def convert_amount(self, amount, key):
         """ Convert amount"""
-        amount = float(amount)
-        print("Rate: " + str(self.conversion_rate))
-        if key == "True":
-            print(amount * self.conversion_rate)
-            return amount * self.conversion_rate
-            # else:
-            #     print(amount * (1 / self.conversion_rate))
-            #     return amount * (1 / self.conversion_rate)
+        try:
+            amount = float(amount)
+            travel_country = self.root.ids.country_spinner.text
+            travel_details = []
+            file = open("currency_details.txt", mode="r", encoding="UTF-8")
+            # Make list of details for travel country
+            # As home country is always australia, details were manually entered
+            for line in file:
+                parts = line.strip().split(",")
+                if parts[0] == travel_country:
+                    travel_details.append(parts[1])
+                    travel_details.append(parts[2])
+            print("Rate: " + str(self.conversion_rate))
+            # If key is true, user is converting from home
+            if key:
+                file.close()
+                result = format(amount * self.conversion_rate, ".3f")
+                self.root.ids.travel_country_input.text = str(result)
+                self.root.ids.status_label.text = "AUD ($) to {} ({})".format(travel_details[0], travel_details[1])
+                print(result)
+            else:
+                result = format(amount * (1 / self.conversion_rate), ".3f")
+                self.root.ids.home_country_input.text = str(result)
+                self.root.ids.status_label.text = "{} ({}) to AUD ($)".format(travel_details[0], travel_details[1])
+                print(result)
+        except ValueError:
+            self.clear_inputs()
+            self.root.ids.status_label.text = "Invalid Number!"
 
     @staticmethod
     def sort_trips():
@@ -95,5 +122,8 @@ class GuiTest(App):
         print(current_date)
         return current_date
 
+    def clear_inputs(self):
+        self.root.ids.home_country_input.text = ""
+        self.root.ids.travel_country_input.text = ""
 
 GuiTest().run()
