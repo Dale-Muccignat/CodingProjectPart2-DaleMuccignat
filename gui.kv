@@ -2,9 +2,10 @@ BoxLayout:
     orientation: 'vertical'
     Label:
         id: current_trip_label
-        text: app.get_current_country()
+        text: "Your Location: \n" + app.get_current_country()
         font_size: 20
         color: (1, 1, 0.5, 1)
+        halign: "center"
     BoxLayout:
         orientation: 'horizontal'
         Spinner:
@@ -13,7 +14,7 @@ BoxLayout:
             # Values takes a list
             values: app.country_names
             # When text is changed, run change_state
-            on_text: app.change_state(self.text)
+            on_text: app.update_rate()
         TextInput:
             id: travel_country_input
             multiline: False
@@ -25,7 +26,8 @@ BoxLayout:
         orientation: 'horizontal'
         Label:
             id: home_country_label
-            text: app.home_state
+            text: app.home_country
+            halign: "center"
         TextInput:
             id: home_country_input
             multiline: False
@@ -35,14 +37,16 @@ BoxLayout:
             on_text_validate: app.convert_amount(self.text, True)
     Label:
         id: date_label
-        text: "  Today is: \n" + app.get_current_time()
+        text: "Today is: \n" + app.current_date
+        halign: "center"
     BoxLayout:
         orientation: 'horizontal'
         Label:
             id: status_label
+            halign: "center"
         Button:
             id: update_button
             text: "Update"
-            on_press: app.change_state(country_spinner.text)
+            on_press: app.update_rate()
 
 
