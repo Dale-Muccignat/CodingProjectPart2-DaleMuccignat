@@ -11,14 +11,14 @@ from trip import Details
 __author__ = 'Dale Muccignat'
 
 
-class GuiTest(App):
+class GuiCurrencyConverter(App):
     home_country = StringProperty()
     travel_country = StringProperty()
     current_country = StringProperty()
     country_names = ListProperty()
 
     def __init__(self, **kwargs):
-        super(GuiTest, self).__init__(**kwargs)
+        super(GuiCurrencyConverter, self).__init__(**kwargs)
         self.conversion_rate = 0
         self.current_date = self.get_current_date()
         # Details lists of form [code, symbol]
@@ -148,4 +148,4 @@ class GuiTest(App):
         current_date = time.strftime("%Y/%m/%d")
         return current_date
 
-GuiTest().run()
+GuiCurrencyConverter().run()
