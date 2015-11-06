@@ -148,4 +148,5 @@ class GuiCurrencyConverter(App):
         current_date = time.strftime("%Y/%m/%d")
         return current_date
 
+
 GuiCurrencyConverter().run()
