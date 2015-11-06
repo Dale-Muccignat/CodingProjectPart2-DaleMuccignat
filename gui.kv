@@ -1,10 +1,18 @@
+<Label>:
+    canvas.before:
+        Color:
+            rgba: 0, 0.5, 0.7, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
 BoxLayout:
     orientation: 'vertical'
     Label:
         id: current_trip_label
-        text: 'Your Location: \n' + app.get_current_country()
+        text: 'Your Location: \n' + app.current_country
         font_size: 20
-        color: (1, 1, 0.5, 1)
+        color: (1, 1, 1, 1)
         halign: 'center'
     BoxLayout:
         orientation: 'horizontal'
@@ -14,12 +22,12 @@ BoxLayout:
             # Values takes a list
             values: app.country_names
             # When text is changed, run change_state
-            on_text: app.update_rate(True)
+            on_text: app.update_rate(False)
+            background_color: (0, 0, 1, 1)
         TextInput:
             id: travel_country_input
             multiline: False
             text: ''
-            readonly: True
             on_text: status_label.text = ''
             # When enter is pressed, run convert_amount
             on_text_validate: app.convert_amount(self.text, False)
@@ -33,8 +41,7 @@ BoxLayout:
             id: home_country_input
             multiline: False
             text: ""
-            readonly: True
-            on_text: status_label.text = ""
+            on_text: status_label.text = ''
             on_text_validate: app.convert_amount(self.text, True)
     Label:
         id: date_label
@@ -48,6 +55,7 @@ BoxLayout:
         Button:
             id: update_button
             text: 'Update Currency'
-            on_press: app.update_rate(False)
+            on_press: app.update_rate(True)
+            background_color: (0, 0, 1, 1)
 
 
